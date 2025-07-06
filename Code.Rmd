@@ -1,0 +1,158 @@
+---
+title: "Mini Project 2"
+author: "S/18/SP/608 | S.D.A.V.S.Preamthilake"
+date: "2024-05-30"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(CCA)
+library(CCP)
+library(candisc)
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+data("mtcars")
+df <- mtcars %>%
+  select(mpg,cyl,disp,hp,drat,wt,am,gear,carb)
+```
+```{r}
+head(df)
+```
+```{r}
+# Check for null values in each column
+missing_values <- df %>%
+ summarise_all(~ sum(is.na(.)))
+# Print the number of missing values in each column
+print(missing_values)
+
+```
+
+```{r}
+car_spec <- cbind(df[,c(1,3:5)])
+car_charac <- cbind(df[,c(2,6:9)])
+```
+
+```{r}
+car_spec
+```
+```{r}
+car_charac
+```
+```{r}
+car_spec <- car_spec %>%
+ mutate(across(everything(), scale))
+car_charac <- car_charac %>%
+ mutate(across(everything(), scale))
+```
+
+```{r}
+matcor(car_spec,car_charac)
+```
+
+
+```{r}
+# Perform Canonical Correlation Analysis
+cc_result <- cc(car_spec, car_charac)
+
+# Display the canonical correlations
+print(cc_result$cor)
+```
+```{r}
+can_variates_spec <- cc_result$xcoef
+can_variates_spec
+```
+```{r}
+can_variates_charac <- cc_result$ycoef
+can_variates_charac
+```
+
+```{r}
+rho <- cc_result$cor
+
+n = dim(car_spec)[1]
+p = length(car_spec)
+q = length(car_charac)
+```
+
+```{r}
+n
+```
+```{r}
+p
+```
+```{r}
+q
+```
+```{r}
+p.asym(rho, n, p, q, tstat = 'Wilks')
+```
+```{r}
+p.asym(rho, n, p, q, tstat = 'Hotelling')
+```
+```{r}
+p.asym(rho, n, p, q, tstat = 'Pillai')
+```
+```{r}
+p.asym(rho, n, p, q, tstat = 'Roy')
+```
+```{r}
+Wilks(cancor(car_spec,car_charac))
+```
+
+
+```{r}
+squared_cc <- rho^2
+squared_cc
+```
+```{r}
+loadings <- comput(car_spec,car_charac,cc_result)
+```
+
+```{r}
+loadings$corr.X.xscores
+```
+```{r}
+loadings$corr.Y.xscores
+```
+```{r}
+loadings$corr.X.yscores
+```
+```{r}
+loadings$corr.Y.yscores
+```
+```{r}
+# standardized car specification canonical coefficients
+s1 <- diag(sqrt(diag(cov(car_spec))))
+ss1 <- s1 %*% can_variates_spec
+`rownames<-`(ss1,c("mpg","disp","hp","drat"))
+```
+```{r}
+# standardized car characteristics canonical coefficients
+s2 <- diag(sqrt(diag(cov(car_charac))))
+ss2 <- s2 %*% can_variates_charac
+`rownames<-`(ss2,c("cyl", "wt", "am", "gear", "carb"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
