@@ -1,0 +1,1 @@
+This project explores the relationship between car specifications (e.g., miles per gallon, displacement, horsepower) and car characteristics (e.g., weight, transmission type, number of cylinders) using Canonical Correlation Analysis (CCA). The analysis, performed on the mtcars dataset in R, reveals significant multivariate correlations between these two sets of variables.
